@@ -7,7 +7,7 @@ public class PlayerMana : MonoBehaviour
     public float CurrentMana {  get; private set; }
 
     void Start() {
-        CurrentMana = _stats.Mana;
+        ResetMana();
     }
 
     //TEMP
@@ -31,12 +31,17 @@ public class PlayerMana : MonoBehaviour
             {
                 _stats.Mana = 0;
             }
+            CurrentMana = _stats.Mana;
         }
         else
         {
             Debug.Log("Not enough mana");
         }
 
-        CurrentMana = _stats.Mana;
+        
+    }
+
+    public void ResetMana() {
+        CurrentMana = _stats.MaxMana;
     }
 }

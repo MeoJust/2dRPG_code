@@ -4,6 +4,7 @@ public class PlayerAttack : MonoBehaviour
 {
     PlayerIA _actions;
     PlayerMove _playerMove;
+    PlayerMana _playerMana;
     EnemyBrain _enemyTarget;
 
     [Header("Config")]
@@ -17,6 +18,7 @@ public class PlayerAttack : MonoBehaviour
     void Awake() {
         _actions = new PlayerIA();
         _playerMove = GetComponent<PlayerMove>();
+        _playerMana = GetComponent<PlayerMana>();
     }
 
     void OnEnable() {
@@ -52,11 +54,12 @@ public class PlayerAttack : MonoBehaviour
     IEnumerator AttackCoroutine() {
         if(_currentAttackPosition != null)
         {
-            //if (_playerMana.CurrentMana < _initWeapon.RecuiredMana) yield break;
+            if (_playerMana.CurrentMana < _initWeapon.RecuiredMana) yield break;
             Quaternion rotation = Quaternion.Euler(new Vector3(0, 0, _currentAttackRotation));
             Projectile projectile = Instantiate(_initWeapon.ProjectilePrefab, _currentAttackPosition.position, rotation);
             projectile.Dir = Vector3.up;
             print("doljno rabotat'");
+            _playerMana.UseMana(_initWeapon.RecuiredMana);
         }
 
         //here comes the animations
