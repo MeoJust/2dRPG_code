@@ -18,6 +18,11 @@ public class PlayerStatsSO : ScriptableObject
     public float Mana;
     public float MaxMana;
 
+    [Header("Attack")]
+    public float BaseDamage;
+    public float CritChance;
+    public float CritDmg;
+
     public void ResetPlayer()
     {
         Health = MaxHealth;

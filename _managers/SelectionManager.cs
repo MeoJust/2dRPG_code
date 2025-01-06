@@ -28,14 +28,15 @@ public class SelectionManager : MonoBehaviour
             if (hit.collider != null)
             {
                 EnemyBrain enemyBrain = hit.collider.GetComponent<EnemyBrain>();
-                if (enemyBrain != null)
-                {
-                    OnEnemySelectedEvent?.Invoke(enemyBrain);
-                }
-                else
-                {
-                    OnNoSelectionEvent?.Invoke();
-                }
+                if (!enemyBrain) return;
+                EnemyHealth enemyHealth = enemyBrain.GetComponent<EnemyHealth>();
+                if(enemyHealth.CurrentHealth <= 0) return;
+
+                OnEnemySelectedEvent?.Invoke(enemyBrain);
+            }
+            else
+            {
+                OnNoSelectionEvent?.Invoke();
             }
         }
     }

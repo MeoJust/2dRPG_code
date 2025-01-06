@@ -6,6 +6,7 @@ public class Projectile : MonoBehaviour
     [SerializeField] float speed = 5f;
 
     public Vector3 Dir { get; set; }
+    public float Damage { get; set; }
 
     void Update()
     {
@@ -14,6 +15,7 @@ public class Projectile : MonoBehaviour
 
     void OnTriggerEnter2D(Collider2D other)
     {
+        other.GetComponent<IDamageable>()?.TakeDamage(Damage);
         Destroy(gameObject);
     }
 }

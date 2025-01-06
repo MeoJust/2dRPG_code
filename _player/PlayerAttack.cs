@@ -8,6 +8,7 @@ public class PlayerAttack : MonoBehaviour
     EnemyBrain _enemyTarget;
 
     [Header("Config")]
+    [SerializeField] PlayerStatsSO _stats;
     [SerializeField] WeaponSO _initWeapon;
     [SerializeField] Transform[] _attackPoints;
 
@@ -25,12 +26,14 @@ public class PlayerAttack : MonoBehaviour
         _actions.Enable();
         SelectionManager.OnEnemySelectedEvent += EnemySelectedCallback;
         SelectionManager.OnNoSelectionEvent += NoEnemySelectedCallback;
+        EnemyHealth.OnEnemyDeadEvent += NoEnemySelectedCallback;
     }
 
     void OnDisable() {
         _actions.Disable();
         SelectionManager.OnEnemySelectedEvent -= EnemySelectedCallback;
         SelectionManager.OnNoSelectionEvent -= NoEnemySelectedCallback;
+        EnemyHealth.OnEnemyDeadEvent -= NoEnemySelectedCallback;
     }
 
     void Start() {
@@ -58,6 +61,7 @@ public class PlayerAttack : MonoBehaviour
             Quaternion rotation = Quaternion.Euler(new Vector3(0, 0, _currentAttackRotation));
             Projectile projectile = Instantiate(_initWeapon.ProjectilePrefab, _currentAttackPosition.position, rotation);
             projectile.Dir = Vector3.up;
+            projectile.Damage = GetAttackDamage();
             print("doljno rabotat'");
             _playerMana.UseMana(_initWeapon.RecuiredMana);
         }
@@ -65,6 +69,20 @@ public class PlayerAttack : MonoBehaviour
         //here comes the animations
         yield return new WaitForSeconds(.5f);
         print("Ready completed");
+    }
+
+
+    //crit chance
+    float GetAttackDamage() {
+        float damage = _stats.BaseDamage;
+        damage += _initWeapon.Damage;
+        float randomPerc = Random.Range(0, 100f);
+        if(randomPerc <= _stats.CritChance)
+        {
+            damage += damage * (_stats.CritDmg / 100f);
+        }
+
+        return damage;
     }
 
     void GetFirePosition() {
