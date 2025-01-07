@@ -37,6 +37,7 @@ public class PlayerAttack : MonoBehaviour
     }
 
     void Start() {
+        EquipWp(_initWeapon);
         _actions.attack.clickAttack.performed += ctx => Attack();
         _currentAttackPosition = _attackPoints[0];
     }
@@ -69,6 +70,11 @@ public class PlayerAttack : MonoBehaviour
         //here comes the animations
         yield return new WaitForSeconds(.5f);
         print("Ready completed");
+    }
+
+    public void EquipWp(WeaponSO newWp) {
+        _initWeapon = newWp;
+        _stats.TotalDmg = _stats.BaseDamage + _initWeapon.Damage;
     }
 
 

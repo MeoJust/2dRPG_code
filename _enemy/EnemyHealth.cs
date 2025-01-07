@@ -5,6 +5,7 @@ public class EnemyHealth : MonoBehaviour, IDamageable
 {
     EnemyBrain _brain;
     EnemySelector _selector;
+    EnemyLoot _enemyLoot;
 
     [Header("Config")]
     [SerializeField] float _health;
@@ -16,6 +17,7 @@ public class EnemyHealth : MonoBehaviour, IDamageable
     void Awake() {
         _brain = GetComponent<EnemyBrain>();
         _selector = GetComponent<EnemySelector>();
+        _enemyLoot = GetComponent<EnemyLoot>();
     }
 
     void Start() {
@@ -27,20 +29,25 @@ public class EnemyHealth : MonoBehaviour, IDamageable
 
         if (CurrentHealth <= 0)
         {
-            _brain.enabled = false;
-
-            SpriteRenderer[] visuals = gameObject.GetComponentsInChildren<SpriteRenderer>();
-            foreach (var visual in visuals)
-            {
-                visual.color = Color.gray;
-                _selector.OnNoSelectionCallback();
-                gameObject.layer = LayerMask.NameToLayer("Ignore Raycast");
-                OnEnemyDeadEvent?.Invoke();
-            }
+            DisableEnemy();
         }
         else
         {
             DamageManager.Instance.ShowDamage(amount, transform);
+        }
+    }
+
+    void DisableEnemy() {
+        _brain.enabled = false;
+
+        SpriteRenderer[] visuals = gameObject.GetComponentsInChildren<SpriteRenderer>();
+        foreach (var visual in visuals)
+        {
+            visual.color = Color.gray;
+            _selector.OnNoSelectionCallback();
+            gameObject.layer = LayerMask.NameToLayer("Ignore Raycast");
+            OnEnemyDeadEvent?.Invoke();
+            GameManager.Instance.AddPlayerExp(_enemyLoot.ExpDrop);
         }
     }
 }
