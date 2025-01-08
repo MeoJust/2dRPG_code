@@ -25,7 +25,6 @@ public class PlayerMana : MonoBehaviour
         if (_stats.Mana >= amount)
         {
             _stats.Mana -= amount;
-            Debug.Log("Mana ostalos': " + _stats.Mana);
 
             if (_stats.Mana <= 0)
             {

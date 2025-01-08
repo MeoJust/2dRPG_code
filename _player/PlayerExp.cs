@@ -30,6 +30,8 @@ public class PlayerExp : MonoBehaviour
     void NextLevel()
     {
         _stats.Level++;
+        _stats.AtributePoints++;
+        //print("attr. points: " + _stats.AtributePoints);
         float expRequired = _stats.NextLevelExp;
         float newNextLevelExp = Mathf.Round(expRequired + _stats.NextLevelExp * (_stats.ExpMultiplier / 100));
         _stats.NextLevelExp = newNextLevelExp;

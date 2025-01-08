@@ -1,3 +1,4 @@
+using System;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -21,6 +22,23 @@ public class UIManager : MonoBehaviour
     [SerializeField] TextMeshProUGUI _statsTotalExpTXT;
     [SerializeField] TextMeshProUGUI _statsCurrentExpTXT;
     [SerializeField] TextMeshProUGUI _statsReqExpTXT;
+    [SerializeField] TextMeshProUGUI _attributePointsTXT;
+    [SerializeField] TextMeshProUGUI _strenghtTXT;
+    [SerializeField] TextMeshProUGUI _dexterityTXT;
+    [SerializeField] TextMeshProUGUI _intelligenceTXT;
+
+    void OnEnable() {
+        PlayerUpgrade.OnPlayerUpgradeEvent += UpgradeCallback;
+    }
+
+    void OnDisable() { 
+        PlayerUpgrade.OnPlayerUpgradeEvent -= UpgradeCallback;
+
+    }
+
+    void UpgradeCallback() {
+        UpdateStatsPanel();
+    }
 
     void Update() {
         UpdatePlayerUI();
@@ -50,5 +68,9 @@ public class UIManager : MonoBehaviour
         _statsCurrentExpTXT.text = _stats.CurrentExp.ToString();
         _statsReqExpTXT.text = _stats.NextLevelExp.ToString();
 
+        _attributePointsTXT.text = $"Poionts: {_stats.AtributePoints}";
+        _strenghtTXT.text = _stats.Strenght.ToString();
+        _dexterityTXT.text = _stats.Dexterity.ToString();
+        _intelligenceTXT.text = _stats.Intelligence.ToString();
     }
 }
