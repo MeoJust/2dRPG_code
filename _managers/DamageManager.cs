@@ -1,16 +1,9 @@
 using UnityEngine;
 
-public class DamageManager : MonoBehaviour
+public class DamageManager : Singleton<DamageManager>
 {
-    public static DamageManager Instance;
-
     [Header("Config")]
     [SerializeField] DamageTXT _damageTxtPrefab;
-
-    void Awake()
-    {
-        Instance = this;
-    }
 
     public void ShowDamage(float damageAmount, Transform parent)
     {

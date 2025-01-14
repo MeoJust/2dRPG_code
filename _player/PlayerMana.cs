@@ -4,9 +4,10 @@ public class PlayerMana : MonoBehaviour
 {
     [SerializeField] PlayerStatsSO _stats;
 
-    public float CurrentMana {  get; private set; }
+    public float CurrentMana { get; private set; }
 
-    void Start() {
+    void Start()
+    {
         ResetMana();
     }
 
@@ -36,11 +37,21 @@ public class PlayerMana : MonoBehaviour
         {
             Debug.Log("Not enough mana");
         }
-
-        
     }
 
-    public void ResetMana() {
+    public bool CanRecoverMana()
+    {
+        return _stats.Mana > 0 && _stats.Mana < _stats.MaxMana;
+    }
+
+    public void RecoverMana(float amount)
+    {
+        _stats.Mana += amount;
+        _stats.Mana = Mathf.Min(_stats.Mana, _stats.MaxMana);
+    }
+
+    public void ResetMana()
+    {
         CurrentMana = _stats.MaxMana;
     }
 }

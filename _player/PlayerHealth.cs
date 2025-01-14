@@ -33,6 +33,20 @@ public class PlayerHealth : MonoBehaviour, IDamageable
         }
     }
 
+    public void RestoreHealth(float amount)
+    {
+        _stats.Health += amount;
+        if (_stats.Health > _stats.MaxHealth)
+        {
+            _stats.Health = _stats.MaxHealth;
+        }
+    }
+
+    public bool CanRestoreHealth()
+    {
+        return _stats.Health > 0 && _stats.Health < _stats.MaxHealth;
+    }
+
     void DieMfc()
     {
         Debug.Log("Player is dead");
