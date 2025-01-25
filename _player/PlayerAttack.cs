@@ -37,7 +37,7 @@ public class PlayerAttack : MonoBehaviour
     }
 
     void Start() {
-        EquipWp(_initWeapon);
+        WpManager.Instance.EquipWeapon(_initWeapon);
         _actions.attack.clickAttack.performed += ctx => Attack();
         _currentAttackPosition = _attackPoints[0];
     }

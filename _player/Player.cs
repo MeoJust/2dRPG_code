@@ -4,6 +4,7 @@ public class Player : MonoBehaviour
 {
     public PlayerMana PlayerMana{get; private set;}
     public PlayerHealth PlayerHealth{get; set;}
+    public PlayerAttack PlayerAttack{get; private set;}
 
     [Header("Config")]
     [SerializeField] PlayerStatsSO _stats;
@@ -17,6 +18,7 @@ public class Player : MonoBehaviour
     private void Awake() {
         PlayerMana = GetComponent<PlayerMana>();
         PlayerHealth = GetComponent<PlayerHealth>();
+        PlayerAttack = GetComponent<PlayerAttack>();
     }
 
     //TEMP

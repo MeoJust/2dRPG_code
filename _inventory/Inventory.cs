@@ -1,5 +1,5 @@
 using UnityEngine;
-using System.Collections.Generic; 
+using System.Collections.Generic;
 
 public class Inventory : Singleton<Inventory>
 {
@@ -11,17 +11,19 @@ public class Inventory : Singleton<Inventory>
     public InventoryItemSO _testItem;
 
     public int InventorySize => _inventorySize;
+    public InventoryItemSO[] InventoryItems => _inventoryItems;
 
     void Start()
     {
         _inventoryItems = new InventoryItemSO[_inventorySize];
+        VerifyItemsForDraw();
     }
 
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.T))
         {
-            AddItem(_testItem, 3);
+            AddItem(_testItem, 1);
         }
     }
 
@@ -57,6 +59,30 @@ public class Inventory : Singleton<Inventory>
         }
     }
 
+    public void UseItem(int index)
+    {
+        if (_inventoryItems[index] == null) return;
+        if (_inventoryItems[index].UseItem())
+        {
+            DecreaseItemStack(index);
+        }
+    }
+
+    public void RemoveItem(int index)
+    {
+        if (_inventoryItems[index] == null) return;
+        _inventoryItems[index].RemoveItem();
+        _inventoryItems[index] = null;
+        InventoryUI.Instance.DrawItem(null, index);
+    }
+
+    public void EquipItem(int index)
+    {
+        if (_inventoryItems[index] == null) return;
+        if (_inventoryItems[index].ItemType != ItemType.Weapon) return;
+        _inventoryItems[index].EquipItem();
+    }
+
     void AddItemToFreeSlot(InventoryItemSO item, int quantity)
     {
         for (int i = 0; i < _inventorySize; i++)
@@ -66,6 +92,20 @@ public class Inventory : Singleton<Inventory>
             _inventoryItems[i].Quantity = quantity;
             InventoryUI.Instance.DrawItem(_inventoryItems[i], i);
             return;
+        }
+    }
+
+    void DecreaseItemStack(int index)
+    {
+        _inventoryItems[index].Quantity--;
+        if (_inventoryItems[index].Quantity <= 0)
+        {
+            _inventoryItems[index] = null;
+            InventoryUI.Instance.DrawItem(null, index);
+        }
+        else
+        {
+            InventoryUI.Instance.DrawItem(_inventoryItems[index], index);
         }
     }
 
@@ -81,5 +121,16 @@ public class Inventory : Singleton<Inventory>
             }
         }
         return stock;
+    }
+
+    public void VerifyItemsForDraw()
+    {
+        for (int i = 0; i < _inventorySize; i++)
+        {
+            if (_inventoryItems[i] == null)
+            {
+                InventoryUI.Instance.DrawItem(null, i);
+            }
+        }
     }
 }
