@@ -1,9 +1,11 @@
 using UnityEngine;
 using System.Collections.Generic;
+using BayatGames.SaveGameFree;
 
 public class Inventory : Singleton<Inventory>
 {
     [Header("Config")]
+    [SerializeField] GameContent _gameContent;
     [SerializeField] int _inventorySize;
     [SerializeField] InventoryItemSO[] _inventoryItems;
 
@@ -13,10 +15,19 @@ public class Inventory : Singleton<Inventory>
     public int InventorySize => _inventorySize;
     public InventoryItemSO[] InventoryItems => _inventoryItems;
 
+    readonly string INVENTORY_KEY_DATA = "MY_INVENTORY";
+
     void Start()
     {
         _inventoryItems = new InventoryItemSO[_inventorySize];
         VerifyItemsForDraw();
+        LoadInventory();
+
+
+
+        //!!UBRAT'
+        // SaveGame.Delete(INVENTORY_KEY_DATA);
+        //!!UBRAT'
     }
 
     void Update()
@@ -46,6 +57,7 @@ public class Inventory : Singleton<Inventory>
                         AddItem(item, dif);
                     }
                     InventoryUI.Instance.DrawItem(_inventoryItems[index], index);
+                    SaveInventory();
                     return;
                 }
             }
@@ -57,6 +69,8 @@ public class Inventory : Singleton<Inventory>
         {
             AddItem(item, remainingAmount);
         }
+
+        SaveInventory();
     }
 
     public void UseItem(int index)
@@ -66,6 +80,8 @@ public class Inventory : Singleton<Inventory>
         {
             DecreaseItemStack(index);
         }
+
+        SaveInventory();
     }
 
     public void RemoveItem(int index)
@@ -74,6 +90,8 @@ public class Inventory : Singleton<Inventory>
         _inventoryItems[index].RemoveItem();
         _inventoryItems[index] = null;
         InventoryUI.Instance.DrawItem(null, index);
+
+        SaveInventory();
     }
 
     public void EquipItem(int index)
@@ -133,4 +151,55 @@ public class Inventory : Singleton<Inventory>
             }
         }
     }
+
+    InventoryItemSO ItemExistInGameContent(string itemId){
+        for(int i = 0; i < _inventorySize; i++){
+            if(_gameContent.GameItems[i].ItemId == itemId){
+                return _gameContent.GameItems[i];
+            }
+        }
+        return null;
+    }
+
+    void LoadInventory(){
+        if(SaveGame.Exists(INVENTORY_KEY_DATA)){
+            InventoryData data = SaveGame.Load<InventoryData>(INVENTORY_KEY_DATA);
+            for(int i = 0; i < _inventorySize; i++){
+                if(data.ItemContent[i] != null){
+                    InventoryItemSO item = ItemExistInGameContent(data.ItemContent[i]);
+                    if(item != null){
+                        _inventoryItems[i] = item.CopyItem();
+                        _inventoryItems[i].Quantity = data.ItemQuantity[i];
+                        InventoryUI.Instance.DrawItem(_inventoryItems[i], i);
+                    }
+                    else
+                    {
+                        _inventoryItems[i] = null;
+                    }
+                }
+            }
+        }
+    }
+
+    void SaveInventory(){
+        InventoryData data = new InventoryData();
+        data.ItemContent = new string[_inventorySize];
+        data.ItemQuantity = new int[_inventorySize];
+        for (int i = 0; i < _inventorySize; i++)
+        {
+            if (_inventoryItems[i] != null)
+            {
+                data.ItemContent[i] = _inventoryItems[i].ItemId;
+                data.ItemQuantity[i] = _inventoryItems[i].Quantity;
+            }
+            else
+            {
+                data.ItemContent[i] = null;
+                data.ItemQuantity[i] = 0;
+            }
+        }
+
+        SaveGame.Save(INVENTORY_KEY_DATA, data);
+    }
 }
+
