@@ -4,6 +4,7 @@ using UnityEngine;
 public class EnemyHealth : MonoBehaviour, IDamageable
 {
     EnemyBrain _brain;
+    Rigidbody2D _rb;
     EnemySelector _selector;
     EnemyLoot _enemyLoot;
 
@@ -18,6 +19,7 @@ public class EnemyHealth : MonoBehaviour, IDamageable
         _brain = GetComponent<EnemyBrain>();
         _selector = GetComponent<EnemySelector>();
         _enemyLoot = GetComponent<EnemyLoot>();
+        _rb = GetComponent<Rigidbody2D>();
     }
 
     void Start() {
@@ -45,7 +47,8 @@ public class EnemyHealth : MonoBehaviour, IDamageable
         {
             visual.color = Color.gray;
             _selector.OnNoSelectionCallback();
-            gameObject.layer = LayerMask.NameToLayer("Ignore Raycast");
+            // gameObject.layer = LayerMask.NameToLayer("Ignore Raycast");
+            _rb.bodyType = RigidbodyType2D.Static;
             OnEnemyDeadEvent?.Invoke();
             GameManager.Instance.AddPlayerExp(_enemyLoot.ExpDrop);
         }
