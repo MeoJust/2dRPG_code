@@ -2,9 +2,12 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
 using System.Collections.Generic;
+using System;
 
 public class DialogueManager : Singleton<DialogueManager>
 {
+public static event Action<InteractionType> OnExtraInterractionEvent;
+
     [Header("Config")]
     [SerializeField] GameObject _dialoguePanel;
     [SerializeField] TextMeshProUGUI _dialogueTXT;
@@ -81,6 +84,10 @@ public class DialogueManager : Singleton<DialogueManager>
         if (_dialogueQueue.Count <= 0)
         {
             CloseDialogue();
+            if (NPCSelected.DialogueToShow.HasInteraction)
+            {
+                OnExtraInterractionEvent?.Invoke(NPCSelected.DialogueToShow.InteractionType);
+            }
             return;
         }
 

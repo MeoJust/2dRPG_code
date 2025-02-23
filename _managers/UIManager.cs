@@ -27,24 +27,52 @@ public class UIManager : MonoBehaviour
     [SerializeField] TextMeshProUGUI _dexterityTXT;
     [SerializeField] TextMeshProUGUI _intelligenceTXT;
 
-    void OnEnable() {
+    [Header("Extra Panels")]
+    [SerializeField] GameObject _npcQuestPanel;
+    [SerializeField] GameObject _playerQuestPanel;
+    [SerializeField] GameObject _shopPanel;
+
+    [Header("Texts")]
+    [SerializeField] TextMeshProUGUI _coinsTXT;
+
+    void OnEnable()
+    {
         PlayerUpgrade.OnPlayerUpgradeEvent += UpgradeCallback;
+        DialogueManager.OnExtraInterractionEvent += ExtraInterractionCallback;
     }
 
-    void OnDisable() { 
+    void OnDisable()
+    {
         PlayerUpgrade.OnPlayerUpgradeEvent -= UpgradeCallback;
-
+        DialogueManager.OnExtraInterractionEvent -= ExtraInterractionCallback;
     }
 
-    void UpgradeCallback() {
+    void ExtraInterractionCallback(InteractionType interactionType)
+    {
+        switch (interactionType)
+        {
+            case InteractionType.Quest:
+                OpenCloseNPCQuestPanel(true);
+                break;
+            case InteractionType.Shop:
+                OpenCloseShopPanel(true);
+                break;
+
+        }
+    }
+
+    void UpgradeCallback()
+    {
         UpdateStatsPanel();
     }
 
-    void Update() {
+    void Update()
+    {
         UpdatePlayerUI();
     }
 
-    public void OpenCloseStatsPanel() {
+    public void OpenCloseStatsPanel()
+    {
         _charPanel.SetActive(!_charPanel.activeSelf);
         if (_charPanel.activeSelf)
         {
@@ -52,14 +80,32 @@ public class UIManager : MonoBehaviour
         }
     }
 
-    void UpdatePlayerUI() {
+    public void OpenCloseNPCQuestPanel(bool value)
+    {
+        _npcQuestPanel.SetActive(value);
+    }
+
+    public void OpenClosePlayerQuestPanel(bool value)
+    {
+        _playerQuestPanel.SetActive(value);
+    }
+
+    public void OpenCloseShopPanel(bool value){
+        _shopPanel.SetActive(value);
+    }
+
+    void UpdatePlayerUI()
+    {
         _levelTXT.text = $"Lv. {_stats.Level}";
         _healthBar.fillAmount = Mathf.Lerp(_healthBar.fillAmount, _stats.Health / _stats.MaxHealth, 10f * Time.deltaTime);
         _manaBar.fillAmount = Mathf.Lerp(_manaBar.fillAmount, _stats.Mana / _stats.MaxMana, 10f * Time.deltaTime);
         _expBar.fillAmount = Mathf.Lerp(_expBar.fillAmount, _stats.CurrentExp / _stats.NextLevelExp, 10f * Time.deltaTime);
+
+        _coinsTXT.text = CoinManager.Instance.Coins.ToString();
     }
 
-    void UpdateStatsPanel() {
+    void UpdateStatsPanel()
+    {
         _statsLevelTXT.text = _stats.Level.ToString();
         _statsDmgTXT.text = _stats.TotalDmg.ToString();
         _statsCritChanceTXT.text = _stats.CritChance.ToString();
